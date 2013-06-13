@@ -47,7 +47,7 @@ class Launcher:
 
 	def _howto(self):
 		self._log("\nHow to:")
-		self._log("    python refine.py [options]\n")
+		self._log("    python launcher.py [options]\n")
 		self._log("Available options:")
 		self._log("    --skip-update-check     skip remote check, just take me to the grefine")
 		self._log("    --help                  SOS: help me")
@@ -55,7 +55,7 @@ class Launcher:
 
 	def run(self):
 		self._log("Starting OpenRefine jetty server...")
-		#os.system('./launcher')
+		#os.system('./refine')
 
 	def __init__(self):
 

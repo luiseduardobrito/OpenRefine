@@ -3,6 +3,7 @@ from xml.dom import minidom
 
 class Launcher:
 
+	
 	_remote = "https://gist.github.com/luiseduardobrito/5750844/raw/3216b5c8243aae0c717bc7d4826836a66ae3dbe3/config.xml"
 	_version = "0.1"
 

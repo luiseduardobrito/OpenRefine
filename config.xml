@@ -3,7 +3,8 @@
 	<config>
 		<version>0.1</version>
 	</config>
-	<workspace>
-	    <main default="true">https://github.com/luiseduardobrito/OpenRefine/raw/gpnx/workspace.zip</main>
-	</workspace>
+	<workspaces>
+	    <main default="true">https://github.com/luiseduardobrito/OpenRefine/raw/gpnx/repo/main.zip</main>
+        <blank>https://github.com/luiseduardobrito/OpenRefine/raw/gpnx/repo/blank.zip</blank>
+	</workspaces>
 </refine>

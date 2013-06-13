@@ -6,7 +6,7 @@ class Launcher:
 	_path    = "workspace/"
 	_version = "0.1"
 
-	_remote  = "https://gist.github.com/luiseduardobrito/5750844/raw/087c65aa9461029244fe43b869bb695547260669/config.xml"
+	_remote  = "https://gist.github.com/luiseduardobrito/5750844/raw/49d8ad6266739ad0deefeaecfca7023af0b1dac0/config.xml"
 	_local   = "config.xml"
 
 	_local_workspace  = _path + "workspace.zip"

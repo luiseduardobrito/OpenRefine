@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <refine>
 	<config>
-		<version>0.1</version>
-	</config>
+		<version>0.1</version>	</config>
 	<workspaces>
 	    <main default="true">https://github.com/luiseduardobrito/OpenRefine/raw/gpnx/repo/main.zip</main>
         <blank>https://github.com/luiseduardobrito/OpenRefine/raw/gpnx/repo/blank.zip</blank>

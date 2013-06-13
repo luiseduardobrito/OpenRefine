@@ -148,6 +148,15 @@ class Launcher:
 		return
 
 	def run(self):
+		for i in range(len(sys.argv)):
+			if sys.argv[i] == "--os":
+				if sys.argv[i+1] == "linux":
+					os.system('./launcher -d %s'%self._path)
+					return
+				elif sys.argv[i+1] == "windows":
+					os.system('launcher.bat')
+					return
+
 		os.system('./launcher -d %s'%self._path)
 		return
 

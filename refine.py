@@ -1,9 +1,15 @@
-import urllib, sys, os
+import urllib, sys, os, glob
 from xml.dom import minidom
 
 class Launcher:
 
-	_remote = "https://gist.github.com/luiseduardobrito/5750844/raw/3216b5c8243aae0c717bc7d4826836a66ae3dbe3/config.xml"
+	_remote  = "https://gist.github.com/luiseduardobrito/5750844/raw/3216b5c8243aae0c717bc7d4826836a66ae3dbe3/config.xml"
+	_local   = "config.xml"
+
+	_remote_workspace = ""
+	_local_workspace  = "projects"
+
+	_path    = "projects"
 	_version = "0.1"
 
 	def getText(self, nodelist):
@@ -38,7 +44,19 @@ class Launcher:
 		self._log("Adding projects to OpenRefine workspace")
 
 	def purge(self):
-		os.system("wget %s" % self._remote)
+		self._log("Purging configuration files...")
+		os.remove(self._local)
+
+		self._log("Download untouched configuration file from server...")
+		urllib.urlretrieve (self._remote, self._local)
+
+		self._log("Deleting all projects...")
+		os.rmdir(self._projects)
+
+		self._log("Downloading projects files. Please, be a little patient, it may take some time...")
+		urllib.urlretrieve (self._remote_workspace, self._local_workspace)
+
+		self._log("Configurations purged successfully")
 
 	def parse(self, input):
 		xmldoc = minidom.parse(urllib.urlopen(input))
@@ -69,12 +87,16 @@ class Launcher:
 
 	def run(self):
 		self._log("Starting OpenRefine jetty server...")
-		os.system('./launcher')
+		os.system('./launcher -d %s' % self._local)
 
 	def __init__(self):
 
 		if(len(sys.argv) > 1 and (sys.argv[1] == "--help" or sys.argv[1] == "-h" or sys.argv[1] == "help")):
 			self._help()
+			return
+
+		if(len(sys.argv) > 1 and (sys.argv[1] == "--purge-installation" or sys.argv[1] == "-p" or sys.argv[1] == "purge")):
+			self.purge()
 			return
 
 		self._log("GPNX Refine - Initializing launcher resources...")

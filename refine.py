@@ -44,7 +44,7 @@ class Launcher:
 	    return texts
 
 	def _log(self, msg):
-		print msg
+		print(msg)
 
 	def check_updates(self, config_url = ''):
 		self._log("Getting update information from server...")
@@ -170,6 +170,8 @@ class Launcher:
 			self.remote_version()
 			return
 
+		self._info()
+
 		# --purge-installation
 		if(len(sys.argv) > 1 and (sys.argv[1] == "--purge-installation" or sys.argv[1] == "-p" or sys.argv[1] == "purge")):
 			(v,w) = self.get_remote_info(self._remote)
@@ -189,8 +191,6 @@ class Launcher:
 			self.purge()
 			self.run()
 			return
-
-		self._info()
 
 		if(len(sys.argv) > 1 and sys.argv[1] == "--skip-update-check"):
 			self.run()

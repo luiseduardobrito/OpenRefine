@@ -25,7 +25,17 @@ class Launcher:
 	def check_updates(self, config_url = ''):
 		self._log("Getting update information from server...")
 		config = self.parse(self._remote)
-		self._log("Client version: %s" % self._version)
+		self._log("Version: %s" % self._version)
+
+		if(self._version == "0.1"):
+			self._log("Client already in latest version.")
+		else:
+			self.update_projects()
+
+	def update_projects(self):
+		self._log("Downloading projects metadata...")
+		self._log("Inflating projects files")
+		self._log("Adding projects to OpenRefine workspace")
 
 	def parse(self, input):
 		xmldoc = minidom.parse(urllib.urlopen(input))

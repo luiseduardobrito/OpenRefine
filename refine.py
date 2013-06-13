@@ -12,7 +12,7 @@ class Launcher:
 	_path    = "projects/"
 	_version = "0.1"
 
-	def unzip(source_filename, dest_dir):
+	def unzip(self, source_filename, dest_dir):
 	    with zipfile.ZipFile(source_filename) as zf:
 	        for member in zf.infolist():
 	            # Path traversal defense copied from
@@ -25,7 +25,7 @@ class Launcher:
 	                if word in (os.curdir, os.pardir, ''): continue
 	                path = os.path.join(path, word)
 	            zf.extract(member, path)
-	
+
 	def getText(self, nodelist):
 	    rc = []
 	    for node in nodelist:
@@ -52,16 +52,16 @@ class Launcher:
 			self._log("Client already in latest version.")
 			return
 		else:
-			self._log("Updating client...")
 			self.update_projects()
 
 	def update_projects(self):
 		self._log("Downloading projects metadata...")
 		urllib.urlretrieve (self._remote_workspace, self._local_workspace)
 
-		self._log("Inflating projects files")
+		self._log("Inflating projects files...")
+		self.unzip(self._local_workspace, self._path)
 
-		self._log("Adding projects to OpenRefine workspace")
+		self._log("Added projects to OpenRefine workspace successfully...")
 
 	def purge(self):
 		self._log("Purging configuration files...")

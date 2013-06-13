@@ -1,4 +1,4 @@
-import urllib, sys, os, glob
+import urllib, sys, os, glob, zipfile
 from xml.dom import minidom
 
 class Launcher:
@@ -7,10 +7,25 @@ class Launcher:
 	_local   = "config.xml"
 
 	_remote_workspace = "https://github.com/luiseduardobrito/OpenRefine/blob/gpnx/worspace.zip?raw=true"
-	_local_workspace  = "projects/"
+	_local_workspace  = "projects/workspace.zip"
 
+	_path    = "projects/"
 	_version = "0.1"
 
+	def unzip(source_filename, dest_dir):
+	    with zipfile.ZipFile(source_filename) as zf:
+	        for member in zf.infolist():
+	            # Path traversal defense copied from
+	            # http://hg.python.org/cpython/file/tip/Lib/http/server.py#l789
+	            words = member.filename.split('/')
+	            path = dest_dir
+	            for word in words[:-1]:
+	                drive, word = os.path.splitdrive(word)
+	                head, word = os.path.split(word)
+	                if word in (os.curdir, os.pardir, ''): continue
+	                path = os.path.join(path, word)
+	            zf.extract(member, path)
+	
 	def getText(self, nodelist):
 	    rc = []
 	    for node in nodelist:
@@ -29,17 +44,23 @@ class Launcher:
 
 	def check_updates(self, config_url = ''):
 		self._log("Getting update information from server...")
-		config = self.parse(self._remote)
-		self._log("Version: %s" % self._version)
+		remote_version = self.get_remote_version(self._remote)
 
-		if(self._version == "0.1"):
+		self._log("Remote version: %s" % remote_version)
+
+		if(self._version == remote_version):
 			self._log("Client already in latest version.")
+			return
 		else:
+			self._log("Updating client...")
 			self.update_projects()
 
 	def update_projects(self):
 		self._log("Downloading projects metadata...")
+		urllib.urlretrieve (self._remote_workspace, self._local_workspace)
+
 		self._log("Inflating projects files")
+
 		self._log("Adding projects to OpenRefine workspace")
 
 	def purge(self):
@@ -103,7 +124,7 @@ class Launcher:
 
 	def run(self):
 		self._log("Starting OpenRefine jetty server...")
-		os.system('./launcher -d %s'%self._local_workspace)
+		os.system('./launcher -d %s'%self._path)
 		return
 
 	def __init__(self):

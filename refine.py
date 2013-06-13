@@ -25,7 +25,20 @@ class Launcher:
 	def check_updates(self, config_url = ''):
 		self._log("Getting update information from server...")
 		config = self.parse(self._remote)
-		self._log("Client version: %s" % self._version)
+		self._log("Version: %s" % self._version)
+
+		if(self._version == "0.1"):
+			self._log("Client already in latest version.")
+		else:
+			self.update_projects()
+
+	def update_projects(self):
+		self._log("Downloading projects metadata...")
+		self._log("Inflating projects files")
+		self._log("Adding projects to OpenRefine workspace")
+
+	def purge(self):
+		os.system("wget %s" % self._remote)
 
 	def parse(self, input):
 		xmldoc = minidom.parse(urllib.urlopen(input))
@@ -35,7 +48,7 @@ class Launcher:
 			self._version = self.handleTok(config.getElementsByTagName("version"))
 		else:
 			self._log("No configuration information found, downloading new one...");
-			os.system("wget %s" % self._remote)
+			self.purge()
 			check_updates()
 
 	def _help(self):
@@ -47,15 +60,16 @@ class Launcher:
 
 	def _howto(self):
 		self._log("\nHow to:")
-		self._log("    python launcher.py [options]\n")
+		self._log("    python refine.py [options]\n")
 		self._log("Available options:")
 		self._log("    --skip-update-check     skip remote check, just take me to the grefine")
+		self._log("    --purge-installation    purge all stuff and redownload from remote")
 		self._log("    --help                  SOS: help me")
 		self._log("\n")
 
 	def run(self):
 		self._log("Starting OpenRefine jetty server...")
-		#os.system('./refine')
+		os.system('./launcher')
 
 	def __init__(self):
 

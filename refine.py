@@ -12,19 +12,21 @@ class Launcher:
 	_path    = "projects/"
 	_version = "0.1"
 
-	def unzip(self, source_filename, dest_dir):
-	    with zipfile.ZipFile(source_filename) as zf:
-	        for member in zf.infolist():
-	            # Path traversal defense copied from
-	            # http://hg.python.org/cpython/file/tip/Lib/http/server.py#l789
-	            words = member.filename.split('/')
-	            path = dest_dir
-	            for word in words[:-1]:
-	                drive, word = os.path.splitdrive(word)
-	                head, word = os.path.split(word)
-	                if word in (os.curdir, os.pardir, ''): continue
-	                path = os.path.join(path, word)
-	            zf.extract(member, path)
+	def unzip(self, zipFilePath, destDir):
+	    zfile = zipfile.ZipFile(zipFilePath)
+	    for name in zfile.namelist():
+	        (dirName, fileName) = os.path.split(name)
+	        if fileName == '':
+	            # directory
+	            newDir = destDir + '/' + dirName
+	            if not os.path.exists(newDir):
+	                os.mkdir(newDir)
+	        else:
+	            # file
+	            fd = open(destDir + '/' + name, 'wb')
+	            fd.write(zfile.read(name))
+	            fd.close()
+	    zfile.close()
 
 	def getText(self, nodelist):
 	    rc = []

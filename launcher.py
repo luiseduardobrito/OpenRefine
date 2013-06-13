@@ -37,6 +37,9 @@ class Launcher:
 		self._log("Inflating projects files")
 		self._log("Adding projects to OpenRefine workspace")
 
+	def purge(self):
+		os.system("wget %s" % self._remote)
+
 	def parse(self, input):
 		xmldoc = minidom.parse(urllib.urlopen(input))
 		config = xmldoc.getElementsByTagName("config")[0]
@@ -45,7 +48,7 @@ class Launcher:
 			self._version = self.handleTok(config.getElementsByTagName("version"))
 		else:
 			self._log("No configuration information found, downloading new one...");
-			os.system("wget %s" % self._remote)
+			self.purge()
 			check_updates()
 
 	def _help(self):
@@ -60,6 +63,7 @@ class Launcher:
 		self._log("    python refine.py [options]\n")
 		self._log("Available options:")
 		self._log("    --skip-update-check     skip remote check, just take me to the grefine")
+		self._log("    --purge-installation    purge all stuff and redownload from remote")
 		self._log("    --help                  SOS: help me")
 		self._log("\n")
 

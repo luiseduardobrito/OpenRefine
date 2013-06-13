@@ -153,7 +153,7 @@ class Launcher:
 			if sys.argv[i] == "--os":
 				if sys.argv[i+1] == "windows":
 					self._log("Recognized OS: Windows")
-					os.system('launcher.bat')
+					os.system('launcher.bat -d %s' % self._path)
 					return
 				elif sys.argv[i+1] == "linux":
 					self._log("Recognized OS: Linux")

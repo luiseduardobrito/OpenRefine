@@ -150,7 +150,7 @@ class Launcher:
 		return
 
 	def run(self):
-		os.system('./launcher -d %s'%self._path)		
+		os.system('launcher -d %s'%self._path)		
 		return
 
 	def __init__(self):

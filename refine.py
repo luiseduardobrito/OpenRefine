@@ -6,10 +6,9 @@ class Launcher:
 	_remote  = "https://gist.github.com/luiseduardobrito/5750844/raw/3216b5c8243aae0c717bc7d4826836a66ae3dbe3/config.xml"
 	_local   = "config.xml"
 
-	_remote_workspace = ""
-	_local_workspace  = "projects"
+	_remote_workspace = "https://github.com/luiseduardobrito/OpenRefine/blob/gpnx/worspace.zip?raw=true"
+	_local_workspace  = "projects/"
 
-	_path    = "projects"
 	_version = "0.1"
 
 	def getText(self, nodelist):
@@ -58,43 +57,64 @@ class Launcher:
 
 		self._log("Configurations purged successfully")
 
-	def parse(self, input):
+	def get_remote_version(self, input):
 		xmldoc = minidom.parse(urllib.urlopen(input))
+		config = xmldoc.getElementsByTagName("config")[0]
+		return self.handleTok(config.getElementsByTagName("version"))
+
+	def get_local_version(self):
+		xmldoc = minidom.parse(open(self._local, "r"))
 		config = xmldoc.getElementsByTagName("config")[0]
 
 		if(config):
-			self._version = self.handleTok(config.getElementsByTagName("version"))
+			return self.handleTok(config.getElementsByTagName("version"))
 		else:
 			self._log("No configuration information found, downloading new one...");
 			self.purge()
 			check_updates()
 
-	def _help(self):
+	def _info(self):
 		self._log("\nGPNX Refine - Customized large data manipulated solution")
 		self._log("Copyright 2013 - GPNX Group")
-		self._log("Redesigned by Luis Eduardo Brito <luis@gpnxgroup.com>")
+		self._log("Redesigned by Luis Eduardo Brito <luis@gpnxgroup.com>\n")
+
+	def _help(self):
+		self._info()
 		self._howto()
+		self._log("")
 		return
 
 	def _howto(self):
-		self._log("\nHow to:")
+		self._log("How to:")
 		self._log("    python refine.py [options]\n")
 		self._log("Available options:")
+		self._log("    --version               get local version")
 		self._log("    --skip-update-check     skip remote check, just take me to the grefine")
 		self._log("    --purge-installation    purge all stuff and redownload from remote")
 		self._log("    --help                  SOS: help me")
-		self._log("\n")
+
+	def version(self):
+		self._info()
+		self._log("Local version: %s" % self.get_local_version())
+		self._log("")
 
 	def run(self):
 		self._log("Starting OpenRefine jetty server...")
-		os.system('./launcher -d %s' % self._local)
+		os.system('./launcher -d %s'%self._local_workspace)
 
 	def __init__(self):
 
+		# --help
 		if(len(sys.argv) > 1 and (sys.argv[1] == "--help" or sys.argv[1] == "-h" or sys.argv[1] == "help")):
 			self._help()
 			return
 
+		# --versiom
+		if(len(sys.argv) > 1 and (sys.argv[1] == "--version" or sys.argv[1] == "-v" or sys.argv[1] == "version")):
+			self.version()
+			return
+
+		# --purge-installation
 		if(len(sys.argv) > 1 and (sys.argv[1] == "--purge-installation" or sys.argv[1] == "-p" or sys.argv[1] == "purge")):
 			self.purge()
 			return

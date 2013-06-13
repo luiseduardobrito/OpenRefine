@@ -77,6 +77,7 @@ class Launcher:
 		self._log("\nGPNX Refine - Customized large data manipulated solution")
 		self._log("Copyright 2013 - GPNX Group")
 		self._log("Redesigned by Luis Eduardo Brito <luis@gpnxgroup.com>\n")
+		return
 
 	def _help(self):
 		self._info()
@@ -92,15 +93,18 @@ class Launcher:
 		self._log("    --skip-update-check     skip remote check, just take me to the grefine")
 		self._log("    --purge-installation    purge all stuff and redownload from remote")
 		self._log("    --help                  SOS: help me")
+		return
 
 	def version(self):
 		self._info()
 		self._log("Local version: %s" % self.get_local_version())
 		self._log("")
+		return
 
 	def run(self):
 		self._log("Starting OpenRefine jetty server...")
 		os.system('./launcher -d %s'%self._local_workspace)
+		return
 
 	def __init__(self):
 

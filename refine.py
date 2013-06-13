@@ -124,6 +124,14 @@ class Launcher:
 		self._log("")
 		return
 
+	def remote_version(self):
+		self._info()
+		self._log("Local version: %s" % self.get_local_version())
+		self._log("Remote version: %s" % self.get_remote_version(self._remote))
+		self._log(("Client is updated!", "Client needs to be updated.")[self.get_local_version() == self.get_remote_version(self._remote)])
+		self._log("")
+		return
+
 	def run(self):
 		self._log("Starting OpenRefine jetty server...")
 		os.system('./launcher -d %s'%self._path)
@@ -136,9 +144,14 @@ class Launcher:
 			self._help()
 			return
 
-		# --versiom
+		# --version
 		if(len(sys.argv) > 1 and (sys.argv[1] == "--version" or sys.argv[1] == "-v" or sys.argv[1] == "version")):
 			self.version()
+			return
+
+		# --remote-version
+		if(len(sys.argv) > 1 and (sys.argv[1] == "--remote-version" or sys.argv[1] == "-r" or sys.argv[1] == "remote")):
+			self.remote_version()
 			return
 
 		# --purge-installation

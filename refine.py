@@ -1,4 +1,4 @@
-import urllib, sys, os, glob, zipfile
+import urllib, sys, os, zipfile, shutil
 from xml.dom import minidom
 
 class Launcher:
@@ -6,7 +6,6 @@ class Launcher:
 	_remote  = "https://gist.github.com/luiseduardobrito/5750844/raw/3216b5c8243aae0c717bc7d4826836a66ae3dbe3/config.xml"
 	_local   = "config.xml"
 
-	_remote_workspace = "https://github.com/luiseduardobrito/OpenRefine/blob/gpnx/workspace.zip?raw=true"
 	_local_workspace  = "projects/workspace.zip"
 
 	_path    = "projects/"
@@ -46,51 +45,60 @@ class Launcher:
 
 	def check_updates(self, config_url = ''):
 		self._log("Getting update information from server...")
-		remote_version = self.get_remote_version(self._remote)
+		self._version = self.get_local_version()
+		(v, w) = self.get_remote_info(self._remote)
 
-		self._log("Remote version: %s" % remote_version)
+		self._log("Local workspace version: %s" % self._version)
 
-		if(self._version == remote_version):
+		if(self._version == v):
 			self._log("Client already in latest version.")
 			return
 		else:
-			self.update_projects()
+			self._log("Workspace needs to be updated. Remote workspace version: %s" % v)
+			self.update_projects(w)
+			self.purge()
+			self._log("Client updated successfuly! \n")
 
-	def update_projects(self):
-		self._log("Downloading projects metadata...")
-		urllib.urlretrieve (self._remote_workspace, self._local_workspace)
+	def update_projects(self, workspace):
+		self._log("Deleting all projects...")
+		shutil.rmtree(self._path)
 
-		self._log("Inflating projects files...")
+		self._log("Creating new blank workspace...")
+		if not os.path.exists(self._path):
+			os.makedirs(self._path)
+
+		self._log("Downloading projects files. Please, be a little patient, it may take some time...")
+		urllib.urlretrieve (workspace, self._local_workspace)
+
+		self._log("Inflating workspace files...")
 		self.unzip(self._local_workspace, self._path)
+		os.remove(self._local_workspace)
 
-		self._log("Added projects to OpenRefine workspace successfully...")
+		self._log("Workspace created and populated successfully!")
 
 	def purge(self):
 		self._log("Purging configuration files...")
 		os.remove(self._local)
 
-		self._log("Download untouched configuration file from server...")
+		self._log("Downloading untouched configuration file from server...")
 		urllib.urlretrieve (self._remote, self._local)
 
-		self._log("Deleting all projects...")
-		os.rmdir(self._projects)
-
-		self._log("Downloading projects files. Please, be a little patient, it may take some time...")
-		urllib.urlretrieve (self._remote_workspace, self._local_workspace)
-
-		self._log("Configurations purged successfully")
-
-	def get_remote_version(self, input):
+	def get_remote_info(self, input)
 		xmldoc = minidom.parse(urllib.urlopen(input))
 		config = xmldoc.getElementsByTagName("config")[0]
-		return self.handleTok(config.getElementsByTagName("version"))
+		return str(self.handleTok(config.getElementsByTagName("version"))).strip().capitalize(),
+		str(self.handleTok(config.getElementsByTagName("workspace")[0])).strip().capitalize()
+
+	def get_remote_version(self, input):
+		(v, w) = self.get_remote_info(input)
+		return v
 
 	def get_local_version(self):
 		xmldoc = minidom.parse(open(self._local, "r"))
 		config = xmldoc.getElementsByTagName("config")[0]
 
 		if(config):
-			return self.handleTok(config.getElementsByTagName("version"))
+			return str(self.handleTok(config.getElementsByTagName("version"))).strip().capitalize()
 		else:
 			self._log("No configuration information found, downloading new one...");
 			self.purge()
@@ -128,12 +136,11 @@ class Launcher:
 		self._info()
 		self._log("Local version: %s" % self.get_local_version())
 		self._log("Remote version: %s" % self.get_remote_version(self._remote))
-		self._log(("Client is updated!", "Client needs to be updated.")[self.get_local_version() == self.get_remote_version(self._remote)])
+		self._log(("Client needs to be updated.", "Client is updated!")[self.get_local_version() == self.get_remote_version(self._remote)])
 		self._log("")
 		return
 
 	def run(self):
-		self._log("Starting OpenRefine jetty server...")
 		os.system('./launcher -d %s'%self._path)
 		return
 

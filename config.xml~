@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<refine>
+	<config>
+		<version>0.1</version>
+	</config>
+	<projects>
+		<project name="PROJECT NAME" version="0.2" baseFile="http://gist.github.com/luiseduarobrito/ID_NUM"/>
+	</projects>
+</refine>

@@ -1,2 +1,2 @@
 #!/bin/bash
-python refine.py --os linux
+python3 refine.py

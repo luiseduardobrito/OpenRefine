@@ -1,4 +1,6 @@
-import urllib, sys, os, zipfile, shutil
+import sys, os, zipfile, shutil
+from urllib.request import urlopen
+from urllib.request import urlretrieve
 from xml.dom import minidom
 
 class Launcher:
@@ -67,7 +69,7 @@ class Launcher:
 			os.makedirs(self._path)
 
 		self._log("Downloading projects files. Please, be a little patient, it may take some time...")
-		urllib.urlretrieve (workspace, self._local_workspace)
+		urlretrieve (workspace, self._local_workspace)
 
 		self._log("Inflating workspace files...")
 		self.unzip(self._local_workspace, self._path)
@@ -80,10 +82,10 @@ class Launcher:
 		os.remove(self._local)
 
 		self._log("Downloading untouched configuration file from server...")
-		urllib.urlretrieve (self._remote, self._local)
+		urlretrieve (self._remote, self._local)
 
 	def get_remote_info(self, input, w = _main_workspace):
-		xmldoc = minidom.parse(urllib.urlopen(input))
+		xmldoc = minidom.parse(urlopen(input))
 		config = xmldoc.getElementsByTagName("config")[0]
 
 		if(len(xmldoc.getElementsByTagName("workspaces")) < 1 

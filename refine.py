@@ -6,7 +6,7 @@ class Launcher:
 	_remote  = "https://gist.github.com/luiseduardobrito/5750844/raw/3216b5c8243aae0c717bc7d4826836a66ae3dbe3/config.xml"
 	_local   = "config.xml"
 
-	_remote_workspace = "https://github.com/luiseduardobrito/OpenRefine/blob/gpnx/worspace.zip?raw=true"
+	_remote_workspace = "https://github.com/luiseduardobrito/OpenRefine/blob/gpnx/workspace.zip?raw=true"
 	_local_workspace  = "projects/workspace.zip"
 
 	_path    = "projects/"

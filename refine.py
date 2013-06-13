@@ -3,13 +3,14 @@ from xml.dom import minidom
 
 class Launcher:
 
-	_remote  = "https://gist.github.com/luiseduardobrito/5750844/raw/3216b5c8243aae0c717bc7d4826836a66ae3dbe3/config.xml"
+	_path    = "workspace/"
+	_version = "0.1"
+
+	_remote  = "https://gist.github.com/luiseduardobrito/5750844/raw/087c65aa9461029244fe43b869bb695547260669/config.xml"
 	_local   = "config.xml"
 
-	_local_workspace  = "projects/workspace.zip"
-
-	_path    = "projects/"
-	_version = "0.1"
+	_local_workspace  = _path + "workspace.zip"
+	_main_workspace = "main"
 
 	def unzip(self, zipFilePath, destDir):
 	    zfile = zipfile.ZipFile(zipFilePath)
@@ -60,10 +61,8 @@ class Launcher:
 			self._log("Client updated successfuly! \n")
 
 	def update_projects(self, workspace):
-		self._log("Deleting all projects...")
+		self._log("Recreating local workspace...")
 		shutil.rmtree(self._path)
-
-		self._log("Creating new blank workspace...")
 		if not os.path.exists(self._path):
 			os.makedirs(self._path)
 
@@ -83,11 +82,17 @@ class Launcher:
 		self._log("Downloading untouched configuration file from server...")
 		urllib.urlretrieve (self._remote, self._local)
 
-	def get_remote_info(self, input)
+	def get_remote_info(self, input, w = _main_workspace):
 		xmldoc = minidom.parse(urllib.urlopen(input))
 		config = xmldoc.getElementsByTagName("config")[0]
-		return str(self.handleTok(config.getElementsByTagName("version"))).strip().capitalize(),
-		str(self.handleTok(config.getElementsByTagName("workspace")[0])).strip().capitalize()
+
+		if(len(xmldoc.getElementsByTagName("workspaces")) < 1 
+			or len(xmldoc.getElementsByTagName("workspaces")[0].getElementsByTagName(w)) < 1):
+			self._log("\nERROR: workspace not found in remote repository.")
+			exit(0)
+
+		return (str(self.handleTok(config.getElementsByTagName("version"))).strip().capitalize(),
+		str(self.handleTok(xmldoc.getElementsByTagName(w))).strip().capitalize())
 
 	def get_remote_version(self, input):
 		(v, w) = self.get_remote_info(input)
@@ -120,10 +125,12 @@ class Launcher:
 		self._log("How to:")
 		self._log("    python refine.py [options]\n")
 		self._log("Available options:")
-		self._log("    --version               get local version")
-		self._log("    --skip-update-check     skip remote check, just take me to the grefine")
-		self._log("    --purge-installation    purge all stuff and redownload from remote")
-		self._log("    --help                  SOS: help me")
+		self._log("    --version                  get local version")
+		self._log("    --skip-update-check        skip remote check, just take me to the grefine")
+		self._log("    --purge-installation       purge all stuff and redownload from remote")
+		self._log("    --workspace [name]         specify remote workspace")
+		self._log("    --directory [name]         specify local workspace")
+		self._log("    --help                     SOS: help me")
 		return
 
 	def version(self):
@@ -163,13 +170,37 @@ class Launcher:
 
 		# --purge-installation
 		if(len(sys.argv) > 1 and (sys.argv[1] == "--purge-installation" or sys.argv[1] == "-p" or sys.argv[1] == "purge")):
+			(v,w) = self.get_remote_info(self._remote)
+			self.update_projects(w)
 			self.purge()
 			return
 
-		self._log("GPNX Refine - Initializing launcher resources...")
+		# --purge-installation
+		if(len(sys.argv) > 1 and (sys.argv[1] == "--workspace" or sys.argv[1] == "-w" or sys.argv[1] == "workspace")):
+
+			if(len(sys.argv) < 2):
+				self._log("You need to specify the workspace you want to use.")
+				exit()
+
+			(v,w) = self.get_remote_info(self._remote, sys.argv[2])
+			self.update_projects(w)
+			self.purge()
+			self.run()
+			return
+
+		self._info()
 
 		if(len(sys.argv) > 1 and sys.argv[1] == "--skip-update-check"):
 			self.run()
+			return
+
+		if(len(sys.argv) > 1 and (sys.argv[1] == "--directory" or sys.argv[1] == "-d" or sys.argv[1] == "directory")):
+
+			if(len(sys.argv) < 2):
+				self._log("You need to specify the local directory you want to work on.")
+				exit()
+
+			self._path = sys.argv[2]
 			return
 
 		self.check_updates()

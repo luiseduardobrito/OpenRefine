@@ -132,7 +132,6 @@ class Launcher:
 		self._log("    --purge-installation       purge all stuff and redownload from remote")
 		self._log("    --workspace [name]         specify remote workspace")
 		self._log("    --directory [name]         specify local workspace")
-		self._log("    --os [name]                specify os (linux/windows)")
 		self._log("    --help                     SOS: help me")
 		return
 
@@ -151,17 +150,6 @@ class Launcher:
 		return
 
 	def run(self):
-		for i in range(len(sys.argv)):
-			if sys.argv[i] == "--os":
-				if sys.argv[i+1] == "windows":
-					self._log("Recognized OS: Windows")
-					os.system('launcher.bat -d %s' % self._path)
-					return
-				elif sys.argv[i+1] == "linux":
-					self._log("Recognized OS: Linux")
-					os.system('./launcher -d %s'%self._path)
-					return
-					
 		os.system('./launcher -d %s'%self._path)		
 		return
 

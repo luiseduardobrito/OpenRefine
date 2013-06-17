@@ -1,6 +1,6 @@
-import sys, os, zipfile, shutil, urllib.request
-from urllib.request import urlopen
-from urllib.request import urlretrieve
+import sys, os, zipfile, shutil, urllib
+from urllib import urlopen
+from urllib import urlretrieve
 from xml.dom import minidom
 
 class Launcher:
